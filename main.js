@@ -10,7 +10,7 @@ class Pipe{
 
         this.rect2Starting={
             x:position,
-            y:this.upperHeight+(boxHeight*4)
+            y:this.upperHeight+(boxHeight*5)
         }
         this.width=window.innerWidth/12;
 
