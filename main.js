@@ -206,7 +206,7 @@ function gameLoop(timestamp){
         GAME_OVER=true;    
         context.fillStyle='#F5DFBB';
         context.fillRect(0,0,GAME_WIDTH,GAME_HEIGHT);
-        context.font = "30px Georgia bolder";
+        context.font = "600 30px Georgia";
         context.fillStyle='#127475';
         if(timestamp-startTime-totalPause>BestScore){
             BestScore=timestamp-startTime-totalPause;
@@ -229,7 +229,7 @@ function gameLoop(timestamp){
 
         Pipe.drawAll(pipeArr,context);
         box.draw(context);
-        context.font = "30px Georgia bolder";
+        context.font = "600 30px Georgia";
         context.fillStyle='#127475';
         context.fillText(Math.floor((timestamp-startTime-totalPause)/1000)+" Second", 5, 25);
         context.fillText("Best: "+ Math.floor(BestScore/1000), GAME_WIDTH-120, 25);
@@ -264,7 +264,7 @@ function touchEVENT(timestamp){
     context.fillRect(0,0,GAME_WIDTH,GAME_HEIGHT);
     Pipe.drawAll(pipeArr,context);
     box.draw(context);
-    context.font = "30px Georgia bolder";
+    context.font = "600 30px Georgia";
     context.fillStyle='#127475';
     context.fillText(Math.floor((timestamp-startTime-totalPause)/1000)+" Second", 5, 25);
     context.fillText("Best: "+ Math.floor(BestScore/1000), GAME_WIDTH-120, 25);
