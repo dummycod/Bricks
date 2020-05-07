@@ -10,7 +10,7 @@ class Pipe{
 
         this.rect2Starting={
             x:position,
-            y:this.upperHeight+(boxHeight*4)
+            y:this.upperHeight+(boxHeight*5)
         }
         this.width=window.innerWidth/12;
 
@@ -20,10 +20,10 @@ class Pipe{
     }
 
     draw(context){
-        context.fillStyle='#940a21';
+        context.fillStyle='#F2542D';
         context.fillRect(this.rect1Starting.x,this.rect1Starting.y,this.width,this.upperHeight);
 
-        context.fillStyle='#940a21';
+       // context.fillStyle='#940a21';
         context.fillRect(this.rect2Starting.x,this.rect2Starting.y,this.width,this.HEIGHT);
     }
 
@@ -107,6 +107,7 @@ class Pipe{
     }
 }
 
+
 class Box{
     
     constructor(positionX , positionY){
@@ -121,7 +122,7 @@ class Box{
     }
 
     draw(context){
-        context.fillStyle='#2b2a26';
+        context.fillStyle='#562C2C';
         context.fillRect(this.position.x,this.position.y,this.width,this.height);
     }
 
@@ -174,6 +175,8 @@ var startTime=0;
 var flag=0;
 var pausetime=0;
 var totalPause=0;
+var touchDetect=0;
+
 function GameOver(){
     GAME_WIDTH= window.innerWidth;
     GAME_HEIGHT=window.innerHeight;
@@ -201,46 +204,53 @@ function gameLoop(timestamp){
 
     if(Pipe.checkGameOver(pipeArr,box)){
         GAME_OVER=true;    
-        context.fillStyle='#32a879';
+        context.fillStyle='#F5DFBB';
         context.fillRect(0,0,GAME_WIDTH,GAME_HEIGHT);
         context.font = "30px Georgia bolder";
-        context.fillStyle='#000000';
+        context.fillStyle='#127475';
+        if(timestamp-startTime-totalPause>BestScore){
+            BestScore=timestamp-startTime-totalPause;
+        }
         context.fillText(Math.floor((timestamp-startTime-totalPause)/1000)+" Seconds ", GAME_WIDTH/3.5, GAME_HEIGHT/2-20);
-        myCanvas.addEventListener('touchstart',restartGame,false);
+       // var text=context.measureText("Best: "+BestScore);
+        context.fillText("Best: "+ Math.floor(BestScore/1000), GAME_WIDTH-120, 25);
+        myCanvas.addEventListener('touchend',restartGame,false);
+
     }else{
         
         var deltaTime=timestamp-lastTime;
         lastTime=timestamp;
-        context.fillStyle='#32a879';
+        context.fillStyle='#F5DFBB';
         context.fillRect(0,0,GAME_WIDTH,GAME_HEIGHT);
 
         box.update(deltaTime);
 
         Pipe.updateAll(pipeArr,deltaTime);
 
-         Pipe.drawAll(pipeArr,context);
-         box.draw(context);
-         context.font = "30px Georgia bolder";
-         context.fillStyle='#000000';
-         context.fillText(Math.floor((timestamp-startTime-totalPause)/1000)+" Second", 0, 25);
-         timestamp=0;
+        Pipe.drawAll(pipeArr,context);
+        box.draw(context);
+        context.font = "30px Georgia bolder";
+        context.fillStyle='#127475';
+        context.fillText(Math.floor((timestamp-startTime-totalPause)/1000)+" Second", 5, 25);
+        context.fillText("Best: "+ Math.floor(BestScore/1000), GAME_WIDTH-120, 25);
+        timestamp=0;
         requestAnimationFrame(gameLoop);
     }
 }
 
-function restartGame(){
+function restartGame(ev){
     flag=1;
     GAME_OVER=false;
     GameOver();
     gameLoop();
-    myCanvas.removeEventListener('touchstart',restartGame);
+    myCanvas.removeEventListener('touchend',restartGame);
 }
 
 
 function init(){
     context.canvas.width=GAME_WIDTH;
     context.canvas.height=GAME_HEIGHT;
-    context.fillStyle='#32a879';
+    context.fillStyle='#F5DFBB';
     context.fillRect(0,0,GAME_WIDTH,GAME_HEIGHT);
 }
 
@@ -250,13 +260,14 @@ function touchEVENT(timestamp){
     var deltaTime=timestamp-prevTime;
     prevTime=timestamp;
     handle_one_touch(deltaTime);
-    context.fillStyle='#32a879';
+    context.fillStyle='#F5DFBB';
     context.fillRect(0,0,GAME_WIDTH,GAME_HEIGHT);
     Pipe.drawAll(pipeArr,context);
     box.draw(context);
     context.font = "30px Georgia bolder";
-    context.fillStyle='#000000';
-    context.fillText(Math.floor((timestamp-startTime-totalPause)/1000)+" Second", 0, 25);
+    context.fillStyle='#127475';
+    context.fillText(Math.floor((timestamp-startTime-totalPause)/1000)+" Second", 5, 25);
+    context.fillText("Best: "+ Math.floor(BestScore/1000), GAME_WIDTH-120, 25);
     if(box.getJumper()<100)
      requestAnimationFrame(touchEVENT);
     else
