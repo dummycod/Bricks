@@ -169,7 +169,11 @@ var pipe2;
 var pipeArr;
 var lastTime;
 var prevTime;
-
+var BestScore=0;
+var startTime=0;
+var flag=0;
+var pausetime=0;
+var totalPause=0;
 function GameOver(){
     GAME_WIDTH= window.innerWidth;
     GAME_HEIGHT=window.innerHeight;
@@ -185,12 +189,15 @@ function GameOver(){
     pipe2.upshiftWindow();
 
     pipeArr=[pipe0,pipe1,pipe2];
-
-    prevTime=0;
-    lastTime=0;
+    pausetime=0;
+    totalPause=0;
 }
 
 function gameLoop(timestamp){
+    if(flag==1){
+        startTime=window.performance.now();
+        flag=0;
+    }
 
     if(Pipe.checkGameOver(pipeArr,box)){
         GAME_OVER=true;    
@@ -198,9 +205,10 @@ function gameLoop(timestamp){
         context.fillRect(0,0,GAME_WIDTH,GAME_HEIGHT);
         context.font = "30px Georgia bolder";
         context.fillStyle='#000000';
-        context.fillText("GAME OVER", GAME_WIDTH/4, GAME_HEIGHT/2);
+        context.fillText(Math.floor((timestamp-startTime-totalPause)/1000)+" Seconds ", GAME_WIDTH/3.5, GAME_HEIGHT/2-20);
         myCanvas.addEventListener('touchstart',restartGame,false);
     }else{
+        
         var deltaTime=timestamp-lastTime;
         lastTime=timestamp;
         context.fillStyle='#32a879';
@@ -212,14 +220,19 @@ function gameLoop(timestamp){
 
          Pipe.drawAll(pipeArr,context);
          box.draw(context);
+         context.font = "30px Georgia bolder";
+         context.fillStyle='#000000';
+         context.fillText(Math.floor((timestamp-startTime-totalPause)/1000)+" Second", 0, 25);
+         timestamp=0;
         requestAnimationFrame(gameLoop);
     }
 }
 
 function restartGame(){
+    flag=1;
     GAME_OVER=false;
     GameOver();
-    gameLoop(0);
+    gameLoop();
     myCanvas.removeEventListener('touchstart',restartGame);
 }
 
@@ -241,6 +254,9 @@ function touchEVENT(timestamp){
     context.fillRect(0,0,GAME_WIDTH,GAME_HEIGHT);
     Pipe.drawAll(pipeArr,context);
     box.draw(context);
+    context.font = "30px Georgia bolder";
+    context.fillStyle='#000000';
+    context.fillText(Math.floor((timestamp-startTime-totalPause)/1000)+" Second", 0, 25);
     if(box.getJumper()<100)
      requestAnimationFrame(touchEVENT);
     else
@@ -259,5 +275,14 @@ window.onload=function(){
 }
 myCanvas.addEventListener('touchstart',touchEVENT,false);
 
+window.onblur=function(){
+    pausetime=window.performance.now();
+}
+
+window.onfocus=function(){
+    pausetime=window.performance.now()-pausetime;
+    totalPause+=pausetime;
+   // document.write(pausetime);
+}
 GameOver();
 gameLoop();
